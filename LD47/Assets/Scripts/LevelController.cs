@@ -14,6 +14,7 @@ public class LevelController : MonoBehaviour
     public GameObject[] levelObjects;
     public GameObject child;
     public GameObject overlayFog;
+    public UIController myUI;
 
     public int [] cameraSizePerLevel;
 
@@ -72,6 +73,9 @@ public class LevelController : MonoBehaviour
         {
             currentTime = Time.time - startTime;
 
+            // Update UI Timer Display
+            myUI.SetUITime(currentTime / lengthOfDay);
+
 
             // Detect end of day
             if (currentTime >= lengthOfDay)
@@ -89,6 +93,7 @@ public class LevelController : MonoBehaviour
         else
         {
             currentTime = Time.time - startTime;
+            myUI.SetUITime(0);
 
 
             // Detect end of day

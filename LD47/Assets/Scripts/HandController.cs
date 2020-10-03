@@ -6,7 +6,7 @@ public class HandController : MonoBehaviour
 {
     public Sprite openHand;
     public Sprite closedHand;
-
+    public GameObject child;
 
     SpriteRenderer spriteRenderer;
 
@@ -15,7 +15,13 @@ public class HandController : MonoBehaviour
     Vector2 objectScreenSpace;
     Vector2 objectOffset;
 
-
+    public bool isGrabbingChild()
+    {
+        if (objectIsBeingDragged && objectBeingDragged == child)
+            return true;
+        else
+            return false;
+    }
 
     // Start is called before the first frame update
     void Start()
