@@ -31,6 +31,7 @@ public class ChildController : MonoBehaviour
     float vertical;
     Rigidbody2D rigidbody2d;
     Animator animator;
+    Random random;
 
 
 
@@ -47,8 +48,7 @@ public class ChildController : MonoBehaviour
         timeSinceAngleChange = Time.time;
 
         rigidbody2d = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-
+        animator = GetComponent<Animator>();        
     }
 
 
@@ -61,6 +61,48 @@ public class ChildController : MonoBehaviour
 
         rigidbody2d.MovePosition(position);
 
+    }
+
+    public void MoveChild(Vector2 pos)
+    {
+        transform.position = new Vector2(pos.x, pos.y);
+    }
+
+    // Trigger a need at time of game day
+    public void TriggerNeed(float dayTime)
+    {
+        if(myNeed == NEEDS.NONE)
+        {
+            Debug.Log("Triggering" + myStage + " Event at " + dayTime);
+            switch (myStage)
+            {
+                case STAGE.BABY:
+                    // Handle BABY Times
+
+
+                    break;
+                case STAGE.TODDLER:
+                    // Handle TODDLER Times
+
+
+
+                    break;
+                case STAGE.CHILD:
+                    // Handle CHILD Times
+
+
+
+                    break;
+                case STAGE.TEEN:
+                    // Handle TEEN Times
+
+
+
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     // Update is called once per frame
