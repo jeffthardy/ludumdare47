@@ -30,6 +30,17 @@ public class HandController : MonoBehaviour
         spriteRenderer.sprite = openHand;
     }
 
+    public void ForceDrop()
+    {
+        if (objectIsBeingDragged)
+        {
+            Debug.Log("Force Stopped Dragging " + objectBeingDragged);
+            objectIsBeingDragged = false;
+            objectBeingDragged = null;
+        }
+        spriteRenderer.sprite = openHand;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -53,6 +64,11 @@ public class HandController : MonoBehaviour
                     objectScreenSpace = Camera.main.WorldToScreenPoint(objectBeingDragged.transform.position);
                     objectOffset = objectBeingDragged.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y));
                     Debug.Log("Dragging " + objectBeingDragged);
+
+                    if(hit.collider.gameObject.GetComponent<ChildController>() != null)
+                    {
+                        hit.collider.gameObject.GetComponent<ChildController>().playPickupAudio();
+                    }
                 }
                 else
                     spriteRenderer.sprite = openHand;
@@ -65,6 +81,20 @@ public class HandController : MonoBehaviour
         {
             if (objectIsBeingDragged)
             {
+                // Check if they are being dropped on a station
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), -Vector2.up, ~(LayerMask.GetMask("station")));
+                if (hit.collider != null)
+                {
+                    if(hit.collider.GetComponent<StationController>() != null)
+                    {
+                        child.GetComponent<ChildController>().HelpChild(hit.collider.GetComponent<StationController>().myStationType);
+                        child.GetComponent<ChildController>().Respawn();
+                    }
+                }
+
+
+
                 Debug.Log("Stopped Dragging " + objectBeingDragged);
                 objectIsBeingDragged = false;
                 objectBeingDragged = null;

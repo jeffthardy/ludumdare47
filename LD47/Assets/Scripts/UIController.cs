@@ -5,23 +5,31 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    public Image mask;
+    public Image dialMask;
+    public Image needMask;
     public float initialPercent = 0;
 
 
-    float originalSize;
+    float originalDialSize;
+    float originalNeedSize;
 
     // Start is called before the first frame update
     void Start()
     {
-        originalSize = mask.rectTransform.rect.width;
+        originalDialSize = dialMask.rectTransform.rect.width;
+        originalNeedSize = needMask.rectTransform.rect.width;
 
         SetUITime(initialPercent);
     }
 
     public void SetUITime(float percent)
     {
-        mask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, originalSize * percent);
+        dialMask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, originalDialSize * percent);
+    }
+
+    public void SetUINeed(float percent)
+    {
+        needMask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, originalNeedSize * percent);
     }
 
     // Update is called once per frame
