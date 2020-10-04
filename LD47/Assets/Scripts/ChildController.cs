@@ -69,6 +69,9 @@ public class ChildController : MonoBehaviour
     int statHealth;
     int statLove;
     int statInteligence;
+    int statHealthFails;
+    int statLoveFails;
+    int statInteligenceFails;
 
 
     Vector2 spawnPoint;
@@ -85,6 +88,11 @@ public class ChildController : MonoBehaviour
 
     AudioSource audioSource;
 
+    private void Awake()
+    {
+        spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
+
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -94,6 +102,9 @@ public class ChildController : MonoBehaviour
         statHealth=0;
         statLove=0;
         statInteligence=0;
+        statHealthFails = 0;
+        statLoveFails = 0;
+        statInteligenceFails = 0;
         angle = 0;
         timeSinceAngleChange = Time.time;
 
@@ -108,12 +119,24 @@ public class ChildController : MonoBehaviour
         ForceNeedClear();
 
 
-        myUIStatHealthText.text = "H: " + statHealth;
-        myUIStatLoveText.text = "L: " + statLove;
-        myUIStatInteligenceText.text = "I: " + statInteligence;
+        myUIStatHealthText.text = "H: " + statHealth + " / " + (statHealth + statHealthFails);
+        myUIStatLoveText.text = "L: " + statLove + " / " + (statLove + statLoveFails);
+        myUIStatInteligenceText.text = "I: " + statInteligence + " / " + (statInteligence + statInteligenceFails);
     }
 
 
+    public void SaveStats()
+    {
+        PlayerPrefs.SetInt("statHealth", statHealth);
+        PlayerPrefs.SetInt("statLove", statLove);
+        PlayerPrefs.SetInt("statInteligence", statInteligence);
+        PlayerPrefs.SetInt("statHealthFails", statHealthFails);
+        PlayerPrefs.SetInt("statLoveFails", statLoveFails);
+        PlayerPrefs.SetInt("statInteligenceFails", statInteligenceFails);
+        PlayerPrefs.Save();
+
+
+    }
 
     private void FixedUpdate()
     {
@@ -360,9 +383,9 @@ public class ChildController : MonoBehaviour
             myLevelController.NeedMet();
 
 
-            myUIStatHealthText.text = "H: " + statHealth;
-            myUIStatLoveText.text = "L: " + statLove;
-            myUIStatInteligenceText.text = "I: " + statInteligence;
+            myUIStatHealthText.text = "H: " + statHealth + " / " + (statHealth + statHealthFails);
+            myUIStatLoveText.text = "L: " + statLove + " / " + (statLove + statLoveFails);
+            myUIStatInteligenceText.text = "I: " + statInteligence + " / " + (statInteligence + statInteligenceFails);
         }
         else
         {
@@ -563,19 +586,19 @@ public class ChildController : MonoBehaviour
                 switch (myNeed)
                 {
                     case NEEDS.CLEAN:
-                        statHealth--;
+                        statHealthFails++;
                         break;
                     case NEEDS.FOOD:
-                        statHealth--;
+                        statHealthFails++;
                         break;
                     case NEEDS.EDUCATE:
-                        statInteligence--;
+                        statInteligenceFails++;
                         break;
                     case NEEDS.LOVE:
-                        statLove--;
+                        statLoveFails++;
                         break;
                     case NEEDS.SLEEP:
-                        statHealth--;
+                        statHealthFails++;
                         break;
                 }
                 MakeMess(myNeed);
@@ -584,9 +607,9 @@ public class ChildController : MonoBehaviour
                 myUI.SetUINeed(0);
 
 
-                myUIStatHealthText.text = "H: " + statHealth;
-                myUIStatLoveText.text = "L: " + statLove;
-                myUIStatInteligenceText.text = "I: " + statInteligence;
+                myUIStatHealthText.text = "H: " + statHealth + " / " + (statHealth + statHealthFails);
+                myUIStatLoveText.text = "L: " + statLove + " / " + (statLove + statLoveFails);
+                myUIStatInteligenceText.text = "I: " + statInteligence + " / " + (statInteligence + statInteligenceFails);
             }
         }
 

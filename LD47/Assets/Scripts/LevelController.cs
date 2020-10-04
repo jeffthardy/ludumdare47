@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LevelController : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class LevelController : MonoBehaviour
     public float childNeedTimeScale = 3.0f;
 
 
+    public string finishScene;
+
+
     public GameObject[] levelObjects;
     public ChildController child;
     public HandController hand;
@@ -23,6 +27,22 @@ public class LevelController : MonoBehaviour
     public UIController myUI;
     public Text myUILevelText;
     public Text myUIStageText;
+    public GameObject canvas;
+
+    public SpriteRenderer toddlerIntermission;
+    public SpriteRenderer childIntermission;
+    public SpriteRenderer teenIntermission;
+    public SpriteRenderer oldmanIntermission;
+
+    public AudioClip toddlerIntroClip;
+    public AudioClip childIntroClip;
+    public AudioClip teenIntroClip;
+    public AudioClip oldmanIntroClip;
+
+    public AudioClip babyMusicClip;
+    public AudioClip toddlerMusicClip;
+    public AudioClip childMusicClip;
+    public AudioClip teenMusicClip;
 
     public int [] cameraSizePerLevel;
 
@@ -31,6 +51,7 @@ public class LevelController : MonoBehaviour
 
     public Vector2[] childSpawnPoint;
 
+    AudioSource audioSource;
 
     bool isDay;
     int lastLevel;
@@ -46,6 +67,9 @@ public class LevelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        canvas.SetActive(true);
+
         if (cameraSizePerLevel.Length != levelObjects.Length)
             Debug.Log("ERROR! cameraSettingsPerLevel.Length != levelObjects.Length");
         if (cameraPositionPerLevel.Length != levelObjects.Length)
@@ -72,12 +96,27 @@ public class LevelController : MonoBehaviour
         //myUIStageText.text = "Stage : " + (currentStage + 1);
 
 
+        audioSource = GetComponent<AudioSource>();
+
         switch (currentLevel)
         {
-            case 0: child.AgeChild(ChildController.STAGE.BABY); break;
-            case 1: child.AgeChild(ChildController.STAGE.TODDLER); break;
-            case 2: child.AgeChild(ChildController.STAGE.CHILD); break;
-            case 3: child.AgeChild(ChildController.STAGE.TEEN); break;
+            case 0: child.AgeChild(ChildController.STAGE.BABY);
+                audioSource.loop = true;
+                audioSource.clip = babyMusicClip;
+                audioSource.Play();
+                break;
+            case 1: child.AgeChild(ChildController.STAGE.TODDLER);
+                audioSource.loop = true;
+                audioSource.clip = toddlerMusicClip;
+                audioSource.Play(); break;
+            case 2: child.AgeChild(ChildController.STAGE.CHILD);
+                audioSource.loop = true;
+                audioSource.clip = childMusicClip;
+                audioSource.Play(); break;
+            case 3: child.AgeChild(ChildController.STAGE.TEEN);
+                audioSource.loop = true;
+                audioSource.clip = teenMusicClip;
+                audioSource.Play(); break;
         }
 
 
@@ -86,6 +125,10 @@ public class LevelController : MonoBehaviour
         Camera.main.orthographicSize = cameraSizePerLevel[currentLevel];
         Camera.main.transform.position = new Vector3(cameraPositionPerLevel[currentLevel].x, cameraPositionPerLevel[currentLevel].y, -10);
         overlayFog.GetComponent<SpriteRenderer>().enabled = false;
+        toddlerIntermission.enabled = false;
+        childIntermission.enabled = false;
+        teenIntermission.enabled = false;
+        oldmanIntermission.enabled = false;
         Debug.Log("Current Level is " + currentLevel);// + " and current stage is " + currentStage);
 
 
@@ -93,6 +136,7 @@ public class LevelController : MonoBehaviour
         timeToNeed = Random.Range(childNeedMinDelay, childNeedMaxDelay);
         timeSinceNeed = Time.time;
         Debug.Log("Expecting a need in " + timeToNeed + " seconds");
+
     }
 
     public void NeedMet()
@@ -133,6 +177,35 @@ public class LevelController : MonoBehaviour
                 hand.ForceDrop();
                 child.ForceNeedClear();
                 child.Respawn();
+                canvas.SetActive(false);
+                if (currentLevel == 0)
+                {
+                    toddlerIntermission.enabled = true;
+                    audioSource.loop = false;
+                    audioSource.clip = toddlerIntroClip;
+                    audioSource.Play();
+                }
+                if (currentLevel == 1)
+                {
+                    childIntermission.enabled = true;
+                    audioSource.loop = false;
+                    audioSource.clip = childIntroClip;
+                    audioSource.Play();
+                }
+                if (currentLevel == 2)
+                {
+                    teenIntermission.enabled = true;
+                    audioSource.loop = false;
+                    audioSource.clip = teenIntroClip;
+                    audioSource.Play();
+                }
+                if (currentLevel == 3)
+                {
+                    oldmanIntermission.enabled = true;
+                    audioSource.loop = false;
+                    audioSource.clip = oldmanIntroClip;
+                    audioSource.Play();
+                }
             }
         }
         else
@@ -146,24 +219,49 @@ public class LevelController : MonoBehaviour
             {
                 isDay = true;
                 startTime = Time.time;
+                canvas.SetActive(true);
+
+                toddlerIntermission.enabled = false;
+                childIntermission.enabled = false;
+                teenIntermission.enabled = false;
+                oldmanIntermission.enabled = false;
 
                 // Check if it is time to go to the next age
                 //if(currentStage == levelStages)
                 //{
-                    //currentStage = 0;
-                    currentLevel++;
-                    switch (currentLevel)
-                    {
-                        case 0: child.AgeChild(ChildController.STAGE.BABY);break;
-                        case 1: child.AgeChild(ChildController.STAGE.TODDLER); break;
-                        case 2: child.AgeChild(ChildController.STAGE.CHILD); break;
-                        case 3: child.AgeChild(ChildController.STAGE.TEEN); break;
-                    }
-                    if(currentLevel > lastLevel)
-                    {
-                        // We have finished the game... go to status screen
-                        currentLevel = 0;
-                    }
+                //currentStage = 0;
+                currentLevel++;
+                switch (currentLevel)
+                {
+                    case 0:
+                        child.AgeChild(ChildController.STAGE.BABY);
+                        audioSource.loop = true;
+                        audioSource.clip = babyMusicClip;
+                        audioSource.Play();
+                        break;
+                    case 1:
+                        child.AgeChild(ChildController.STAGE.TODDLER);
+                        audioSource.loop = true;
+                        audioSource.clip = toddlerMusicClip;
+                        audioSource.Play(); break;
+                    case 2:
+                        child.AgeChild(ChildController.STAGE.CHILD);
+                        audioSource.loop = true;
+                        audioSource.clip = childMusicClip;
+                        audioSource.Play(); break;
+                    case 3:
+                        child.AgeChild(ChildController.STAGE.TEEN);
+                        audioSource.loop = true;
+                        audioSource.clip = teenMusicClip;
+                        audioSource.Play(); break;
+                }
+                if (currentLevel > lastLevel)
+                {
+                    // We have finished the game... go to status screen
+                    child.SaveStats();
+                    Debug.Log("You have finished the game... results time!");
+                    SceneManager.LoadScene(finishScene);
+                }
                 //}
                 child.MoveChild(childSpawnPoint[currentLevel]);
                 Camera.main.orthographicSize = cameraSizePerLevel[currentLevel];
