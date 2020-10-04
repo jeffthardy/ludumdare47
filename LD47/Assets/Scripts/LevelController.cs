@@ -7,7 +7,7 @@ public class LevelController : MonoBehaviour
 {
 
     public int currentLevel = 0;
-    public int levelStages = 3;
+    //public int levelStages = 3;
     public float lengthOfDay = 5.0f;
     public float lengthOfIntermission = 1.0f;
 
@@ -34,7 +34,7 @@ public class LevelController : MonoBehaviour
 
     bool isDay;
     int lastLevel;
-    int currentStage;
+    //int currentStage;
     float startTime;
     float currentTime;
 
@@ -67,9 +67,18 @@ public class LevelController : MonoBehaviour
         }
         startTime = Time.time;
         isDay = true;
-        currentStage = 0;
+        //currentStage = 0;
         myUILevelText.text = "Level : " + (currentLevel + 1);
-        myUIStageText.text = "Stage : " + (currentStage + 1);
+        //myUIStageText.text = "Stage : " + (currentStage + 1);
+
+
+        switch (currentLevel)
+        {
+            case 0: child.AgeChild(ChildController.STAGE.BABY); break;
+            case 1: child.AgeChild(ChildController.STAGE.TODDLER); break;
+            case 2: child.AgeChild(ChildController.STAGE.CHILD); break;
+            case 3: child.AgeChild(ChildController.STAGE.TEEN); break;
+        }
 
 
         child.MoveChild(childSpawnPoint[currentLevel]);
@@ -77,7 +86,7 @@ public class LevelController : MonoBehaviour
         Camera.main.orthographicSize = cameraSizePerLevel[currentLevel];
         Camera.main.transform.position = new Vector3(cameraPositionPerLevel[currentLevel].x, cameraPositionPerLevel[currentLevel].y, -10);
         overlayFog.GetComponent<SpriteRenderer>().enabled = false;
-        Debug.Log("Current Level is " + currentLevel + " and current stage is " + currentStage);
+        Debug.Log("Current Level is " + currentLevel);// + " and current stage is " + currentStage);
 
 
         // Get a random need delay
@@ -114,7 +123,7 @@ public class LevelController : MonoBehaviour
             if (currentTime >= lengthOfDay)
             {
                 startTime = Time.time;
-                currentStage++;
+                //currentStage++;
                 isDay = false;
                 Debug.Log("Starting Intermission");
                 
@@ -139,9 +148,9 @@ public class LevelController : MonoBehaviour
                 startTime = Time.time;
 
                 // Check if it is time to go to the next age
-                if(currentStage == levelStages)
-                {
-                    currentStage = 0;
+                //if(currentStage == levelStages)
+                //{
+                    //currentStage = 0;
                     currentLevel++;
                     switch (currentLevel)
                     {
@@ -155,16 +164,16 @@ public class LevelController : MonoBehaviour
                         // We have finished the game... go to status screen
                         currentLevel = 0;
                     }
-                }
+                //}
                 child.MoveChild(childSpawnPoint[currentLevel]);
                 Camera.main.orthographicSize = cameraSizePerLevel[currentLevel];
                 Camera.main.transform.position = new Vector3(cameraPositionPerLevel[currentLevel].x, cameraPositionPerLevel[currentLevel].y, -10);
                 levelObjects[currentLevel].SetActive(true);
                 child.gameObject.GetComponent<SpriteRenderer>().enabled = true;
                 overlayFog.GetComponent<SpriteRenderer>().enabled = false;
-                Debug.Log("Current Level is " + currentLevel + " and current stage is " + currentStage);
+                Debug.Log("Current Level is " + currentLevel );
                 myUILevelText.text = "Level : " + (currentLevel + 1);
-                myUIStageText.text = "Stage : " + (currentStage + 1);
+                //myUIStageText.text = "Stage : " + (currentStage + 1);
             }
 
         }
